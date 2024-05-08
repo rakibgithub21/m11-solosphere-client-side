@@ -1,8 +1,35 @@
+/* eslint-disable react/prop-types */
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import JobCard from './JobCard';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const TabCategories = () => {
+    const [jobs, setJobs] = useState([])
+
+    // const[job,setJob] = useState([]) 
+
+    useEffect(() => {
+        const getData = async () => {
+            const { data } = await axios(`${import.meta.env.VITE_API_URL}/jobs`)
+
+            // const data = await axios(`${import.meta.env.VITE_API_URL}/jobs`)
+
+            // setJobs(data.data)
+            setJobs(data)
+        }
+        getData()
+    }, [])
+
+
+
+    // useEffect(() => {
+    //     axios(`${import.meta.env.VITE_API_URL}/jobs`)
+    //     .then(res =>setJob(res.data))
+    // },[])
+
+    
     return (
         <Tabs>
             <div className='container mx-auto py-10'>
@@ -24,13 +51,30 @@ const TabCategories = () => {
                 </div>
 
                 <TabPanel>
-                    <JobCard></JobCard>
+                    <div className='grid gap-8 mt-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'> 
+                        {jobs.filter(job => job.category ==="Web Development").map(job => <JobCard
+                            key={job._id}
+                            job={job}
+                        ></JobCard>)}
+                    </div>
                 </TabPanel>
+
                 <TabPanel>
-                    <h2>Any content 2</h2>
+                    <div className='grid gap-8 mt-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+                        {jobs.filter(job => job.category === "Graphics Design").map(job => <JobCard
+                            key={job._id}
+                            job={job}
+                        ></JobCard>)}
+                    </div>
                 </TabPanel>
+
                 <TabPanel>
-                    <h2>Any content 3</h2>
+                    <div className='grid gap-8 mt-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+                        {jobs.filter(job => job.category === "Digital Marketing").map(job => <JobCard
+                            key={job._id}
+                            job={job}
+                        ></JobCard>)}
+                    </div>
                 </TabPanel>
             </div>
         </Tabs>
