@@ -8,18 +8,19 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import axios from "axios";
 import toast from "react-hot-toast";
+import { de } from "date-fns/locale";
 
 
 const JobDetails = () => {
     const job = useLoaderData();
-    const { _id, buyer_email, category, deadline, description, job_title, max_price, min_price } = job;
+    const { _id, category, buyer, deadline, description, job_title, max_price, min_price } = job;
     const{user} = useContext(AuthContext)
     console.log(job);
     const [startDate, setStartDate] = useState(new Date());
 
     const handleFormSubmission = async (e) => {
         e.preventDefault()
-        if (user?.email === buyer_email) {
+        if (user?.email === buyer?.email) {
             return toast.error('Action not permitted')
         }
         const form = e.target;
@@ -40,16 +41,18 @@ const JobDetails = () => {
             comment,
             job_title,
             email,
+            buyer_email: buyer?.email,
             deadline,
             category,
             status,
-            buyer_email
+            
         }
         // console.table(bidData);
 
         try {
             const  {data}  =  axios.post( `${import.meta.env.VITE_API_URL}/bid`,bidData)
             console.log(data)
+            toast.success(' Successfully Bid!')
         } catch (err) {
             console.log(err)
             console.log('Hi, i am error', err.message)
@@ -63,7 +66,7 @@ const JobDetails = () => {
             <div className='flex-1  px-4 py-7 bg-white rounded-md shadow-md md:min-h-[350px]'>
                 <div className='flex items-center justify-between'>
                     <span className='text-sm font-light text-gray-800 '>
-                        Deadline: {deadline}
+                        Deadline: {new Date(deadline).toLocaleDateString()}
                     </span>
                     <span className='px-4 py-1 text-xs text-blue-800 uppercase bg-blue-200 rounded-full '>
                        {category}
@@ -83,13 +86,13 @@ const JobDetails = () => {
                     </p>
                     <div className='flex items-center gap-5'>
                         <div>
-                            <p className='mt-2 text-sm  text-gray-600 '>Name: Jhankar Vai.</p>
+                            <p className='mt-2 text-sm  text-gray-600 '>Name: {buyer?.name}.</p>
                             <p className='mt-2 text-sm  text-gray-600 '>
-                                Email: jhankar@mahbub.com
+                                Email: {buyer?.email}
                             </p>
                         </div>
                         <div className='rounded-full object-cover overflow-hidden w-14 h-14'>
-                            <img src='' alt='' />
+                            <img className="h-full w-full object-cover" src={buyer?.photo} alt='' />
                         </div>
                     </div>
                     <p className='mt-6 text-lg font-bold text-gray-600 '>
