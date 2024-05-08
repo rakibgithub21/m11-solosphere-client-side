@@ -1,10 +1,46 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import bgImg from '../../assets/images/login.jpg'
 import logo from '../../assets/images/logo.png'
+import toast from "react-hot-toast"
+import { useContext } from "react"
+import { AuthContext } from "../../provider/AuthProvider"
 
 const Login = () => {
+    const navigate = useNavigate()
+    const { signIn, signInWithGoogle } = useContext(AuthContext)
+
+    // Google Signin
+    const handleGoogleSignIn = async () => {
+        try {
+            await signInWithGoogle()
+            toast.success('Signin Successful')
+            navigate('/')
+        } catch (err) {
+            console.log(err)
+            toast.error(err?.message)
+        }
+    }
+
+    // Email Password Signin
+    const handleSignIn = async e => {
+        e.preventDefault()
+        const form = e.target
+        const email = form.email.value
+        const pass = form.password.value
+        console.log({ email, pass })
+        try {
+            //User Login
+            const result = await signIn(email, pass)
+            console.log(result)
+            navigate('/')
+            toast.success('Signin Successful')
+        } catch (err) {
+            console.log(err)
+            toast.error(err?.message)
+        }
+    }
     return (
-        <div className='flex justify-center items-center min-h-[calc(100vh-306px)]'>
+        <div className='flex my-12 justify-center items-center min-h-[calc(100vh-306px)]'>
             <div className='flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg  lg:max-w-4xl '>
                 <div
                     className='hidden bg-cover bg-center lg:block lg:w-1/2'
@@ -26,7 +62,7 @@ const Login = () => {
                         Welcome back!
                     </p>
 
-                    <div className='flex cursor-pointer items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg   hover:bg-gray-50 '>
+                    <div onClick={handleGoogleSignIn} className='flex cursor-pointer items-center justify-center mt-4 text-gray-600 transition-colors duration-300 transform border rounded-lg   hover:bg-gray-50 '>
                         <div className='px-4 py-2'>
                             <svg className='w-6 h-6' viewBox='0 0 40 40'>
                                 <path
