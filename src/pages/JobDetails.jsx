@@ -1,15 +1,61 @@
-import { max } from "date-fns";
-import { useContext } from "react";
+
+import { useContext, useState } from "react";
 import { useLoaderData } from "react-router-dom"
 import { AuthContext } from "../provider/AuthProvider";
 
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
+import toast from "react-hot-toast";
+
+
 const JobDetails = () => {
     const job = useLoaderData();
-    const { _id, category, deadline, description, job_title, max_price, min_price } = job;
+    const { _id, buyer_email, category, deadline, description, job_title, max_price, min_price } = job;
     const{user} = useContext(AuthContext)
     console.log(job);
+    const [startDate, setStartDate] = useState(new Date());
 
-    // const
+    const handleFormSubmission = async (e) => {
+        e.preventDefault()
+        if (user?.email === buyer_email) {
+            return toast.error('Action not permitted')
+        }
+        const form = e.target;
+        const jobId = _id;
+        
+       
+        const price = parseFloat(form.price.value)
+        if (price < parseFloat(min_price)) {
+            return toast.error('Offer more or at least equal to Minimum Price')
+        }
+        const comment = form.comment.value;
+        const deadline = startDate
+        const email = user?.email;
+        const status = "Pending";
+        const bidData = {
+            jobId,
+            price,
+            comment,
+            job_title,
+            email,
+            deadline,
+            category,
+            status,
+            buyer_email
+        }
+        // console.table(bidData);
+
+        try {
+            const  {data}  =  axios.post( `${import.meta.env.VITE_API_URL}/bid`,bidData)
+            console.log(data)
+        } catch (err) {
+            console.log(err)
+            console.log('Hi, i am error', err.message)
+        }
+
+    }
 
     return (
         <div className='flex flex-col md:flex-row justify-around gap-5  items-center min-h-[calc(100vh-306px)] md:max-w-screen-xl mx-auto '>
@@ -57,13 +103,14 @@ const JobDetails = () => {
                     Place A Bid
                 </h2>
 
-                <form>
+                <form onSubmit={handleFormSubmission}>
                     <div className='grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2'>
                         <div>
                             <label className='text-gray-700 ' htmlFor='price'>
                                 Price
                             </label>
                             <input
+                                required
                                 id='price'
                                 type='text'
                                 name='price'
@@ -90,6 +137,7 @@ const JobDetails = () => {
                                 Comment
                             </label>
                             <input
+                                required
                                 id='comment'
                                 name='comment'
                                 type='text'
@@ -99,7 +147,9 @@ const JobDetails = () => {
                         <div className='flex flex-col gap-2 '>
                             <label className='text-gray-700'>Deadline</label>
 
-                            {/* Date Picker Input Field */}
+                            <DatePicker
+                            className="border p-2 rounded-md"
+                                selected={startDate} onChange={(date) => setStartDate(date)} />
                         </div>
                     </div>
 
