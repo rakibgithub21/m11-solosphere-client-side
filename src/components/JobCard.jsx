@@ -3,7 +3,7 @@
 import { Link } from "react-router-dom"
 
 const JobCard = ({ job }) => {
-    console.log(job);
+    // console.log(job);
     const { _id, category, deadline, description, job_title, max_price, min_price } = job
     return (
         <Link to={`/job/${_id}`} className='w-full max-w-sm px-4 py-3 bg-white rounded-md shadow-md hover:scale-[1.05] transition-all'>

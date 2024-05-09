@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom"
 import { AuthContext } from "../../provider/AuthProvider"
 import logo from '../../assets/images/logo.png'
 import bgImg from '../../assets/images/register.jpg'
+import axios from "axios"
 
 const Registration = () => {
     const navigate = useNavigate()
@@ -23,10 +24,15 @@ const Registration = () => {
         try {
             //2. User Registration
             const result = await createUser(email, pass)
-            console.log(result)
+
+            const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/jwt`,
+                { email: result?.user?.email },
+                { withCredentials: true })
+            
             await updateUserProfile(name, photo)
+
             setUser({ ...user, photoURL: photo, displayName: name })
-           navigate(from,{replace:true})
+            navigate(from,{replace:true})
             toast.success('Signup Successful')
         } catch (err) {
             console.log(err)

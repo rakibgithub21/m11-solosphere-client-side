@@ -1,6 +1,6 @@
 
 import { useContext, useState } from "react";
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData, useNavigate, useNavigation } from "react-router-dom"
 import { AuthContext } from "../provider/AuthProvider";
 
 import DatePicker from "react-datepicker";
@@ -8,15 +8,23 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import axios from "axios";
 import toast from "react-hot-toast";
-import { de } from "date-fns/locale";
 
 
 const JobDetails = () => {
+    
     const job = useLoaderData();
+
     const { _id, category, buyer, deadline, description, job_title, max_price, min_price } = job;
     const{user} = useContext(AuthContext)
-    console.log(job);
+    // console.log(job);
+    const navigate = useNavigate()
     const [startDate, setStartDate] = useState(new Date());
+
+    // const navigation = useNavigation()
+
+    // console.log(navigation, 'from navigation');
+    
+   
 
     const handleFormSubmission = async (e) => {
         e.preventDefault()
@@ -52,13 +60,18 @@ const JobDetails = () => {
         try {
             const  {data}  =  axios.post( `${import.meta.env.VITE_API_URL}/bid`,bidData)
             console.log(data)
-            toast.success(' Successfully Bid!')
+            toast.success('Bid Placed Successfully')
+            navigate('/my-bids')
         } catch (err) {
             console.log(err)
             console.log('Hi, i am error', err.message)
         }
 
     }
+
+    // if (navigation.state === 'loading') {
+    //     return <p>Loading comes from use navigation</p>
+    // }
 
     return (
         <div className='flex flex-col md:flex-row justify-around gap-5  items-center min-h-[calc(100vh-306px)] md:max-w-screen-xl mx-auto '>
