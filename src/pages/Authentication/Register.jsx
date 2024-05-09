@@ -31,7 +31,7 @@ const Registration = () => {
             
             await updateUserProfile(name, photo)
 
-            setUser({ ...user, photoURL: photo, displayName: name })
+            setUser({ ...result?.user, photoURL: photo, displayName: name })
             navigate(from,{replace:true})
             toast.success('Signup Successful')
         } catch (err) {
