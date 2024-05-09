@@ -41,7 +41,7 @@ const JobDetails = () => {
             comment,
             job_title,
             email,
-            buyer_email: buyer?.email,
+            buyer,
             deadline,
             category,
             status,
